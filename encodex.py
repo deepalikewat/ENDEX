@@ -27,9 +27,9 @@ def aes_decrypt(encrypted_text, key,iv):
 
 
 io_loop = tornado.ioloop.IOLoop.current()
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("rt.html")
+# class MainHandler(tornado.web.RequestHandler):
+#     def get(self):
+#         self.render("rt.html")
 class MainHandlerxt(tornado.web.RequestHandler):
     def get(self):
         self.render("tt.html")     
@@ -238,8 +238,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             
 if __name__ == "__main__":
     application = tornado.web.Application([
-        (r"/", MainHandler),
-        (r"/deep", MainHandlerxt),
+        (r"/", MainHandlerxt),
         (r"/src/(.*)", tornado.web.StaticFileHandler, {"path": "src"}),
         (r"/ws", WebSocketHandler),
 
