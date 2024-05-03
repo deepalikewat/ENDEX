@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="./src/css/bootstrap.css" rel="stylesheet">
+    <script src="./src/js/bootstrap.bundle.js"></script>
+    <style>
+        body {
+            background-color: rgb(54, 3, 67);
+            min-height: 100vh;
+            background-size: cover;
+            background-repeat: no-repeat;
+            position: relative;
+
+        }
+        #b {
+            color: black;
+            font-size: 14px;
+            width: 70%;
+            height: 300px;
+            position: absolute;
+            top: 70px;
+            right: 20px;
+        }
+        #key {
+            position: absolute;
+            bottom: 70px;
+            left: 1px;
+            display: none
+        }
+
+        #iv {
+            position: absolute;
+            bottom: 110px;
+            left: 1px;
+            display: none
+        }
+
+        .btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50px;
+
+
+
+
+
+        }
+
+        #g {
+            background: rgb(96, 45, 133);
+            color: rgb(184, 138, 217);
+        }
+
+        #tf {
+            color: black;
+            width: 70%;
+            height: 300px;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            word-wrap: break-word;
+
+
+        }
+
+        label {
+            color: white;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex align-items-center  justify-content-between px-3 py-2 w-100" id="g">
+
+        <div class="h3 fw-bold">ENDEX</div>
+        <div class="text-white font-monospace fw-bolder">
+            &copy; Deepali Kewat
+        </div>
+    </div>
+
+
+    <textarea id="b" class="px-3 py-2 shadow-lg  rounded-3" placeholder="Type or paste here ..."></textarea>
+
+    <br>
+
+    <form class="container-fluid">
+        <input type="radio" name="xx" onclick="ctc('e')" />
+        <label for="a">Base64 Encode</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('d')" />
+        <label for="a">Base64 Decode</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('h')" />
+        <label for="a">MD5 Hash</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('s1')" />
+        <label for="a">SHA1</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('s256')" />
+        <label for="a">SHA256</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('s512')" />
+        <label for="a">SHA512</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('ae')" />
+        <label for="a">AES encryption</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('ad')" />
+        <label for="a">AES decryption</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('str_to_hex')" />
+        <label for="a">String to Hex</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('hex_to_str')" />
+        <label for="a">Hex to String</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('hex_to_bin')" />
+        <label for="a">Hex to Binary</label><br>
+
+        <input type="radio" name="xx" onclick="ctc('bin_to_hex')" />
+        <label for="a">Binary to Hex</label><br>
+
+
+        <input placeholder="Enter IV .." class="ms-2 mt-2" type="text" id="iv">
+        <input placeholder="Enter key (hex) .." class="ms-2 mt-2" type="text" id="key">
+    </form>
+    <div class="btn btn-danger ms-4 mt-4" onclick="subm()">Submit</div>
+
+
+    <div id="tf" class=" rounded-3 px-3 py-2 bg-light">Output</div>
+
+    <script>
+
+        let ct = "e"
+        function ctc(cv) {
+            ct = cv;
+            if (cv == "ae" || cv == "ad") {
+                document.getElementById("key").style.display = "block";
+                document.getElementById("iv").style.display = "block";
+            } else {
+                document.getElementById("key").style.display = "none";
+                document.getElementById("iv").style.display = "none";
+            }
+        }
+
+        function subm() {
+            // alert(ct)
+            // let operation = document.querySelector('input[name="xx"]:checked').value;
+            switch (ct) {
+                case "e":
+                    encode();
+                    break;
+                case "d":
+                    decode();
+                    break;
+                case "h":
+                    hash();
+                    break;
+                case "s1":
+                    sha1();
+                    break;
+                case "s512":
+                    sha512();
+                    break;
+                case "s256":
+                    sha256();
+                    break;
+                case "hex_to_bin":
+                    hexToBin();
+                    break;
+                case "bin_to_hex":
+                    binToHex();
+                    break;
+                case "ae":
+                    aesEncrypt();
+                    break;
+                case "ad":
+                    aesDecrypt();
+                    break;
+                case "str_to_hex":
+                    stringToHex();
+                    break;
+                case "hex_to_str":
+                    hexToString();
+                    break;
+
+
+                default:
+                    encode();
+            }
+        }
+
+        const webSocket = new WebSocket("ws://127.0.0.1:8888/ws");
+        let d = document.getElementById("tf");
+
+        webSocket.onmessage = function (event) {
+            let data = JSON.parse(event.data);
+            console.log(data);
+            d.innerHTML = data["d"];
+        }
+
+        function encode() {
+            let ent = document.getElementById("b").value;
+            let pa = {};
+            pa["t"] = "e";
+            pa["d"] = ent;
+            webSocket.send(JSON.stringify(pa));
+        }
+
+        function decode() {
+            let ent = document.getElementById("b").value;
+            let pa = {};
+            pa["t"] = "d";
+            pa["d"] = ent;
+            webSocket.send(JSON.stringify(pa));
+        }
+
+        function hash() {
+            let ent = document.getElementById("b").value;
+            let pa = {};
+            pa["t"] = "m";
+            pa["d"] = ent;
+            webSocket.send(JSON.stringify(pa));
+        }
+
+        function sha1() {
+            let ent = document.getElementById("b").value;
+            let pa = {};
+            pa["t"] = "s1";
+            pa["d"] = ent;
+            webSocket.send(JSON.stringify(pa));
+        }
+
+        function sha256() {
+            let ent = document.getElementById("b").value;
+            let pa = {};
+            pa["t"] = "s256";
+            pa["d"] = ent;
+            webSocket.send(JSON.stringify(pa));
+        }
+
+        function sha512() {
+            let ent = document.getElementById("b").value;
+            let pa = {};
+            pa["t"] = "s512";
+            pa["d"] = ent;
+            webSocket.send(JSON.stringify(pa));
+        }
+        function hexToBin() {
+            let ent = document.getElementById("b").value;
+            let pa = {
+                "t": "hex_to_bin",
+                "d": ent
+            };
+            webSocket.send(JSON.stringify(pa));
+        }
+
+
+        function binToHex() {
+            let ent = document.getElementById("b").value;
+            let pa = {
+                "t": "bin_to_hex",
+                "d": ent
+            };
+            webSocket.send(JSON.stringify(pa));
+        }
+        function aesEncrypt() {
+            let ent = document.getElementById("b").value;
+            let key = document.getElementById("key").value;
+            let iv = document.getElementById("iv").value;
+            let pa = {
+                "t": "ae",
+                "d": {
+                    "data": ent,
+                    "key": key,
+                    "iv": iv
+
+                }
+            };
+            webSocket.send(JSON.stringify(pa));
+        }
+
+
+
+
+
+        function aesDecrypt() {
+            let ent = document.getElementById("b").value;
+            let key = document.getElementById("key").value;
+            let iv = document.getElementById("iv").value;
+
+            let pa = {
+                "t": "ad",
+                "d": {
+                    "data": ent,
+                    "key": key,
+                    "iv": iv
+                }
+            };
+            webSocket.send(JSON.stringify(pa));
+        }
+        function stringToHex() {
+            let ent = document.getElementById("b").value;
+            let pa = {
+                "t": "str_to_hex",
+                "d": ent
+            };
+            webSocket.send(JSON.stringify(pa));
+        }
+
+        function hexToString() {
+            let ent = document.getElementById("b").value;
+            let pa = {
+                "t": "hex_to_str",
+                "d": ent
+            };
+            webSocket.send(JSON.stringify(pa));
+        }
+    </script>
+</body>
+
+</html>
